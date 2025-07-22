@@ -176,6 +176,7 @@
         <li>✔️ 自購商品自動計價</li>
         <li>✔️ 捐贈金額分筆建議</li>
         <li>✔️ 淨利潤（10%）自動顯示</li>
+        <li>✔️ 各自購金額明細</li>
       </ul>
     </div>
     <div class="right-panel">
@@ -245,6 +246,18 @@
         <div class="result-item">
           <span class="result-label">淨利潤 (10%)：</span>
           <span id="resultNetProfit" class="result-value"></span> 元
+        </div>
+        <div class="result-item">
+          <span class="result-label">佳臻自購金額：</span>
+          <span id="resultJiaSelf" class="result-value"></span> 元
+        </div>
+        <div class="result-item">
+          <span class="result-label">vicky自購金額：</span>
+          <span id="resultVickySelf" class="result-value"></span> 元
+        </div>
+        <div class="result-item">
+          <span class="result-label">宗憲自購金額：</span>
+          <span id="resultZongSelf" class="result-value"></span> 元
         </div>
         <div class="result-item">
           <span class="result-label">佳臻分潤 (33%)：</span>
@@ -339,6 +352,9 @@
       document.getElementById('resultMonth').textContent = month;
       document.getElementById('resultTotalAmount').textContent = totalAmount.toLocaleString();
       document.getElementById('resultNetProfit').textContent = netProfit.toLocaleString();
+      document.getElementById('resultJiaSelf').textContent = jiaSelf.toLocaleString();
+      document.getElementById('resultVickySelf').textContent = vickySelf.toLocaleString();
+      document.getElementById('resultZongSelf').textContent = zongSelf.toLocaleString();
       document.getElementById('resultJiaShare').textContent = jiaShare.toLocaleString();
       document.getElementById('resultVickyShare').textContent = vickyShare.toLocaleString();
       document.getElementById('resultZongShare').textContent = zongShare.toLocaleString();
