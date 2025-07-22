@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>ROLMIE 私密呵護分潤計算</title>
+  <title>ROL-MIE 私密呵護分潤計算</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
@@ -169,17 +169,18 @@
 <body>
   <div class="container">
     <div class="left-panel">
-      <h1> ROLMIE 私密呵護分潤計算 </h1>
+      <h1>ROL-MIE 私密呵護分潤計算</h1>
       <p>輕鬆計算每月分潤與捐贈金額，清楚明瞭分配明細。</p>
       <ul>
         <li>✔️ 即時計算三人分潤</li>
         <li>✔️ 自購商品自動計價</li>
         <li>✔️ 捐贈金額分筆建議</li>
+        <li>✔️ 淨利潤（10%）自動顯示</li>
       </ul>
     </div>
     <div class="right-panel">
       <form id="rolmieForm">
-        <h2> 分潤表單 </h2>
+        <h2>ROL-MIE 分潤表單</h2>
         <!-- Step 1 -->
         <div class="step active" id="step1">
           <h3>填寫本月數據</h3>
@@ -240,6 +241,10 @@
         <div class="result-item">
           <span class="result-label">總營業額：</span>
           <span id="resultTotalAmount" class="result-value"></span> 元
+        </div>
+        <div class="result-item">
+          <span class="result-label">淨利潤 (10%)：</span>
+          <span id="resultNetProfit" class="result-value"></span> 元
         </div>
         <div class="result-item">
           <span class="result-label">佳臻分潤 (33%)：</span>
@@ -305,10 +310,13 @@
       const vickySelf = calcSelfBuy(form.vicky_wash.value, form.vicky_oil.value, form.vicky_mask.value);
       const zongSelf = calcSelfBuy(form.zong_wash.value, form.zong_oil.value, form.zong_mask.value);
 
+      // 淨利潤
+      const netProfit = Math.round(totalAmount * 0.10);
+
       // 分潤計算
-      const jiaShare = Math.round(totalAmount * 0.33 - jiaSelf);
-      const vickyShare = Math.round(totalAmount * 0.335 - vickySelf);
-      const zongShare = Math.round(totalAmount * 0.335 - zongSelf);
+      const jiaShare = Math.round(netProfit * 0.33 - jiaSelf);
+      const vickyShare = Math.round(netProfit * 0.335 - vickySelf);
+      const zongShare = Math.round(netProfit * 0.335 - zongSelf);
       const donate = Math.round(totalAmount * 0.01);
 
       // 捐贈分筆
@@ -330,6 +338,7 @@
       document.getElementById('resultBox').style.display = 'block';
       document.getElementById('resultMonth').textContent = month;
       document.getElementById('resultTotalAmount').textContent = totalAmount.toLocaleString();
+      document.getElementById('resultNetProfit').textContent = netProfit.toLocaleString();
       document.getElementById('resultJiaShare').textContent = jiaShare.toLocaleString();
       document.getElementById('resultVickyShare').textContent = vickyShare.toLocaleString();
       document.getElementById('resultZongShare').textContent = zongShare.toLocaleString();
