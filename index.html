@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title> ROLMIE 私密呵護分潤計算 </title>
+  <title>ROL-MIE 私密呵護分潤計算</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
@@ -92,6 +92,23 @@
       color: #5c4a3c;
       margin-left: 0.5em;
     }
+    .selfbuy-list {
+      margin: 0 0 1em 0;
+      padding: 0.8em 1em;
+      background: #fbeaea;
+      border-radius: 8px;
+      color: #b23a48;
+      font-size: 0.98em;
+    }
+    .selfbuy-person {
+      margin-bottom: 0.7em;
+    }
+    .selfbuy-item {
+      margin-left: 1.2em;
+      display: list-item;
+      list-style: disc inside;
+      color: #6d2e2e;
+    }
     button {
       padding: 0.8rem 1.5rem;
       background-color: #d8bfa6;
@@ -169,14 +186,11 @@
 <body>
   <div class="container">
     <div class="left-panel">
-      <h1> 分潤計算 </h1>
+      <h1>ROL-MIE 私密呵護分潤計算</h1>
       <p>輕鬆計算每月分潤與捐贈金額，清楚明瞭分配明細。</p>
       <ul>
-        <li>✔️ 即時計算三人分潤</li>
-        <li>✔️ 自購商品自動計價</li>
-        <li>✔️ 捐贈金額分筆建議</li>
-        <li>✔️ 淨利潤（10%）自動顯示</li>
-        <li>✔️ 各自購金額明細</li>
+        <li>✔️ 只顯示有自購的項目及金額</li>
+        <li>✔️ 各人自購明細、分潤、捐贈全自動</li>
       </ul>
     </div>
     <div class="right-panel">
@@ -191,8 +205,11 @@
           <label for="total_amount">總營業額</label>
           <input id="total_amount" name="total_amount" type="number" required />
 
-          <label for="jia_wash">佳臻自購－私密洗/精華數量</label>
+          <label for="jia_wash">佳臻自購－私密洗數量</label>
           <input id="jia_wash" name="jia_wash" type="number" value="0" min="0" />
+
+          <label for="jia_essence">佳臻自購－精華數量</label>
+          <input id="jia_essence" name="jia_essence" type="number" value="0" min="0" />
 
           <label for="jia_oil">佳臻自購－私密油數量</label>
           <input id="jia_oil" name="jia_oil" type="number" value="0" min="0" />
@@ -200,8 +217,11 @@
           <label for="jia_mask">佳臻自購－敷膜數量</label>
           <input id="jia_mask" name="jia_mask" type="number" value="0" min="0" />
 
-          <label for="vicky_wash">vicky自購－私密洗/精華數量</label>
+          <label for="vicky_wash">vicky自購－私密洗數量</label>
           <input id="vicky_wash" name="vicky_wash" type="number" value="0" min="0" />
+
+          <label for="vicky_essence">vicky自購－精華數量</label>
+          <input id="vicky_essence" name="vicky_essence" type="number" value="0" min="0" />
 
           <label for="vicky_oil">vicky自購－私密油數量</label>
           <input id="vicky_oil" name="vicky_oil" type="number" value="0" min="0" />
@@ -209,8 +229,11 @@
           <label for="vicky_mask">vicky自購－敷膜數量</label>
           <input id="vicky_mask" name="vicky_mask" type="number" value="0" min="0" />
 
-          <label for="zong_wash">宗憲自購－私密洗/精華數量</label>
+          <label for="zong_wash">宗憲自購－私密洗數量</label>
           <input id="zong_wash" name="zong_wash" type="number" value="0" min="0" />
+
+          <label for="zong_essence">宗憲自購－精華數量</label>
+          <input id="zong_essence" name="zong_essence" type="number" value="0" min="0" />
 
           <label for="zong_oil">宗憲自購－私密油數量</label>
           <input id="zong_oil" name="zong_oil" type="number" value="0" min="0" />
@@ -248,16 +271,8 @@
           <span id="resultNetProfit" class="result-value"></span> 元
         </div>
         <div class="result-item">
-          <span class="result-label">佳臻自購金額：</span>
-          <span id="resultJiaSelf" class="result-value"></span> 元
-        </div>
-        <div class="result-item">
-          <span class="result-label">vicky自購金額：</span>
-          <span id="resultVickySelf" class="result-value"></span> 元
-        </div>
-        <div class="result-item">
-          <span class="result-label">宗憲自購金額：</span>
-          <span id="resultZongSelf" class="result-value"></span> 元
+          <span class="result-label">自購明細：</span>
+          <div id="resultSelfBuyList" class="selfbuy-list"></div>
         </div>
         <div class="result-item">
           <span class="result-label">佳臻分潤 (33%)：</span>
@@ -285,9 +300,12 @@
   </div>
   <script>
     // 商品單價
-    const PRICE_WASH = 448;
-    const PRICE_OIL = 518;
-    const PRICE_MASK = 450;
+    const PRICE = {
+      wash: 448,
+      essence: 448,
+      oil: 518,
+      mask: 450
+    };
 
     function nextStep(step) {
       document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
@@ -298,19 +316,54 @@
       }
     }
 
-    function calcSelfBuy(wash, oil, mask) {
-      return (Number(wash||0) * PRICE_WASH) + (Number(oil||0) * PRICE_OIL) + (Number(mask||0) * PRICE_MASK);
+    function calcSelfBuy(obj) {
+      return (
+        (Number(obj.wash || 0) * PRICE.wash) +
+        (Number(obj.essence || 0) * PRICE.essence) +
+        (Number(obj.oil || 0) * PRICE.oil) +
+        (Number(obj.mask || 0) * PRICE.mask)
+      );
+    }
+
+    function buildSelfBuyDetail(obj) {
+      let arr = [];
+      if (obj.wash > 0) arr.push(`私密洗 x${obj.wash}（${obj.wash * PRICE.wash}元）`);
+      if (obj.essence > 0) arr.push(`精華 x${obj.essence}（${obj.essence * PRICE.essence}元）`);
+      if (obj.oil > 0) arr.push(`私密油 x${obj.oil}（${obj.oil * PRICE.oil}元）`);
+      if (obj.mask > 0) arr.push(`敷膜 x${obj.mask}（${obj.mask * PRICE.mask}元）`);
+      return arr;
     }
 
     function updateSelfBuySummary() {
       const form = document.getElementById('rolmieForm');
-      const jiaSelf = calcSelfBuy(form.jia_wash.value, form.jia_oil.value, form.jia_mask.value);
-      const vickySelf = calcSelfBuy(form.vicky_wash.value, form.vicky_oil.value, form.vicky_mask.value);
-      const zongSelf = calcSelfBuy(form.zong_wash.value, form.zong_oil.value, form.zong_mask.value);
-      document.getElementById('selfBuySummary').innerHTML =
-        `佳臻自購金額：<strong>${jiaSelf.toLocaleString()}</strong> 元<br>
-         vicky自購金額：<strong>${vickySelf.toLocaleString()}</strong> 元<br>
-         宗憲自購金額：<strong>${zongSelf.toLocaleString()}</strong> 元`;
+      const jia = {
+        wash: Number(form.jia_wash.value) || 0,
+        essence: Number(form.jia_essence.value) || 0,
+        oil: Number(form.jia_oil.value) || 0,
+        mask: Number(form.jia_mask.value) || 0,
+      };
+      const vicky = {
+        wash: Number(form.vicky_wash.value) || 0,
+        essence: Number(form.vicky_essence.value) || 0,
+        oil: Number(form.vicky_oil.value) || 0,
+        mask: Number(form.vicky_mask.value) || 0,
+      };
+      const zong = {
+        wash: Number(form.zong_wash.value) || 0,
+        essence: Number(form.zong_essence.value) || 0,
+        oil: Number(form.zong_oil.value) || 0,
+        mask: Number(form.zong_mask.value) || 0,
+      };
+      let html = '';
+      function personBlock(name, obj) {
+        let detail = buildSelfBuyDetail(obj);
+        if (detail.length === 0) return '';
+        return `<div class="selfbuy-person"><b>${name}：</b><ul style="margin:0;padding:0;">${detail.map(i=>`<li class="selfbuy-item">${i}</li>`).join('')}</ul>總金額：${calcSelfBuy(obj).toLocaleString()}元</div>`;
+      }
+      html += personBlock('佳臻', jia);
+      html += personBlock('vicky', vicky);
+      html += personBlock('宗憲', zong);
+      document.getElementById('selfBuySummary').innerHTML = html || '無自購';
     }
 
     function submitForm() {
@@ -318,15 +371,33 @@
       const month = form.month.value;
       const totalAmount = Number(form.total_amount.value);
 
-      // 自購金額
-      const jiaSelf = calcSelfBuy(form.jia_wash.value, form.jia_oil.value, form.jia_mask.value);
-      const vickySelf = calcSelfBuy(form.vicky_wash.value, form.vicky_oil.value, form.vicky_mask.value);
-      const zongSelf = calcSelfBuy(form.zong_wash.value, form.zong_oil.value, form.zong_mask.value);
+      // 自購明細
+      const jia = {
+        wash: Number(form.jia_wash.value) || 0,
+        essence: Number(form.jia_essence.value) || 0,
+        oil: Number(form.jia_oil.value) || 0,
+        mask: Number(form.jia_mask.value) || 0,
+      };
+      const vicky = {
+        wash: Number(form.vicky_wash.value) || 0,
+        essence: Number(form.vicky_essence.value) || 0,
+        oil: Number(form.vicky_oil.value) || 0,
+        mask: Number(form.vicky_mask.value) || 0,
+      };
+      const zong = {
+        wash: Number(form.zong_wash.value) || 0,
+        essence: Number(form.zong_essence.value) || 0,
+        oil: Number(form.zong_oil.value) || 0,
+        mask: Number(form.zong_mask.value) || 0,
+      };
 
       // 淨利潤
       const netProfit = Math.round(totalAmount * 0.10);
 
       // 分潤計算
+      const jiaSelf = calcSelfBuy(jia);
+      const vickySelf = calcSelfBuy(vicky);
+      const zongSelf = calcSelfBuy(zong);
       const jiaShare = Math.round(netProfit * 0.33 - jiaSelf);
       const vickyShare = Math.round(netProfit * 0.335 - vickySelf);
       const zongShare = Math.round(netProfit * 0.335 - zongSelf);
@@ -346,15 +417,24 @@
         donateMulti = `單筆：${donate} 元`;
       }
 
+      // 構建自購顯示（只列有自購的項目）
+      function personBlock(name, obj) {
+        let detail = buildSelfBuyDetail(obj);
+        if (detail.length === 0) return '';
+        return `<div class="selfbuy-person"><b>${name}：</b><ul style="margin:0;padding:0;">${detail.map(i=>`<li class="selfbuy-item">${i}</li>`).join('')}</ul>總金額：${calcSelfBuy(obj).toLocaleString()}元</div>`;
+      }
+      let selfBuyHtml = '';
+      selfBuyHtml += personBlock('佳臻', jia);
+      selfBuyHtml += personBlock('vicky', vicky);
+      selfBuyHtml += personBlock('宗憲', zong);
+      document.getElementById('resultSelfBuyList').innerHTML = selfBuyHtml || '無自購';
+
       // 顯示結果頁
       document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
       document.getElementById('resultBox').style.display = 'block';
       document.getElementById('resultMonth').textContent = month;
       document.getElementById('resultTotalAmount').textContent = totalAmount.toLocaleString();
       document.getElementById('resultNetProfit').textContent = netProfit.toLocaleString();
-      document.getElementById('resultJiaSelf').textContent = jiaSelf.toLocaleString();
-      document.getElementById('resultVickySelf').textContent = vickySelf.toLocaleString();
-      document.getElementById('resultZongSelf').textContent = zongSelf.toLocaleString();
       document.getElementById('resultJiaShare').textContent = jiaShare.toLocaleString();
       document.getElementById('resultVickyShare').textContent = vickyShare.toLocaleString();
       document.getElementById('resultZongShare').textContent = zongShare.toLocaleString();
