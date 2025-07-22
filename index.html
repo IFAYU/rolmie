@@ -1,17 +1,348 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <title>ROL-MIE 表單頁面</title>
+  <meta charset="UTF-8" />
+  <title>ROL-MIE 私密呵護分潤計算</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: #fbeaea;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .left-panel {
+      width: 40%;
+      padding: 2rem;
+      background-color: #f9eaea;
+      color: #5b4331;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .left-panel h1 {
+      margin-top: 0;
+      font-size: 2rem;
+      color: #b23a48;
+    }
+    .left-panel p {
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      max-width: 400px;
+    }
+    .left-panel ul {
+      padding-left: 0;
+      font-size: 1rem;
+      list-style-position: inside;
+      max-width: 400px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .left-panel li {
+      margin-bottom: 0.7em;
+    }
+    .right-panel {
+      width: 60%;
+      padding: 2rem;
+      background-color: #fff7f1;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .result-box {
+      background-color: #fff8f4;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(150, 115, 90, 0.1);
+      padding: 2rem;
+      color: #5c4a3c;
+      max-width: 520px;
+      margin: 0 auto;
+      text-align: left;
+      display: none;
+    }
+    .result-title {
+      text-align: center;
+      color: #b23a48;
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 2rem;
+    }
+    .result-item {
+      font-size: 1rem;
+      margin-bottom: 1.2rem;
+      font-weight: bold;
+      color: #5c4a3c;
+    }
+    .result-label {
+      font-weight: bold;
+      color: #b23a48;
+    }
+    .result-value {
+      font-weight: normal;
+      color: #5c4a3c;
+      margin-left: 0.5em;
+    }
+    button {
+      padding: 0.8rem 1.5rem;
+      background-color: #d8bfa6;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 1.5rem;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    button:hover {
+      background-color: #c5aa91;
+    }
+    @media (max-width: 950px) {
+      .container {
+        flex-direction: column;
+      }
+      .left-panel, .right-panel {
+        width: 100%;
+        padding: 1.2rem;
+      }
+      .result-box {
+        padding: 1rem;
+      }
+      .left-panel ul {
+        text-align: left;
+        max-width: 100%;
+      }
+    }
+    form {
+      background-color: #fff8f4;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(150, 115, 90, 0.2);
+      padding: 2rem;
+      width: 100%;
+      max-width: 600px;
+      color: #5c4a3c;
+      margin: 0 auto;
+    }
+    h2, h3 {
+      text-align: center;
+      color: #b23a48;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      margin-bottom: 0.3rem;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #eabbbb;
+      border-radius: 6px;
+      background-color: #fff;
+      font-size: 1rem;
+    }
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+    }
+    .step {
+      display: none;
+    }
+    .step.active {
+      display: block;
+    }
+  </style>
 </head>
 <body>
-  <h1>ROL-MIE 使用者填寫表單</h1>
-  <p>請協助填寫以下資訊，我們會儘快與您聯繫 💌</p>
+  <div class="container">
+    <div class="left-panel">
+      <h1>ROL-MIE 私密呵護分潤計算</h1>
+      <p>輕鬆計算每月分潤與捐贈金額，清楚明瞭分配明細。</p>
+      <ul>
+        <li>✔️ 即時計算三人分潤</li>
+        <li>✔️ 自購商品自動計價</li>
+        <li>✔️ 捐贈金額分筆建議</li>
+      </ul>
+    </div>
+    <div class="right-panel">
+      <form id="rolmieForm">
+        <h2>ROL-MIE 分潤表單</h2>
+        <!-- Step 1 -->
+        <div class="step active" id="step1">
+          <h3>填寫本月數據</h3>
+          <label for="month">月份（如 2024-06）</label>
+          <input id="month" name="month" type="text" required />
 
-  <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSddsoUF1D2thLcxsFFg8J1WZtCnquxVj11Z49L56jlaWTbI1A/viewform?embedded=true"
-          width="100%" height="1524" frameborder="0" marginheight="0" marginwidth="0">
-    載入中…
-  </iframe>
+          <label for="total_amount">總營業額</label>
+          <input id="total_amount" name="total_amount" type="number" required />
 
+          <label for="jia_wash">佳臻自購－私密洗/精華數量</label>
+          <input id="jia_wash" name="jia_wash" type="number" value="0" min="0" />
+
+          <label for="jia_oil">佳臻自購－私密油數量</label>
+          <input id="jia_oil" name="jia_oil" type="number" value="0" min="0" />
+
+          <label for="jia_mask">佳臻自購－敷膜數量</label>
+          <input id="jia_mask" name="jia_mask" type="number" value="0" min="0" />
+
+          <label for="vicky_wash">vicky自購－私密洗/精華數量</label>
+          <input id="vicky_wash" name="vicky_wash" type="number" value="0" min="0" />
+
+          <label for="vicky_oil">vicky自購－私密油數量</label>
+          <input id="vicky_oil" name="vicky_oil" type="number" value="0" min="0" />
+
+          <label for="vicky_mask">vicky自購－敷膜數量</label>
+          <input id="vicky_mask" name="vicky_mask" type="number" value="0" min="0" />
+
+          <label for="zong_wash">宗憲自購－私密洗/精華數量</label>
+          <input id="zong_wash" name="zong_wash" type="number" value="0" min="0" />
+
+          <label for="zong_oil">宗憲自購－私密油數量</label>
+          <input id="zong_oil" name="zong_oil" type="number" value="0" min="0" />
+
+          <label for="zong_mask">宗憲自購－敷膜數量</label>
+          <input id="zong_mask" name="zong_mask" type="number" value="0" min="0" />
+
+          <div class="button-group">
+            <button type="button" onclick="nextStep(2)">下一步 ▶</button>
+          </div>
+        </div>
+        <!-- Step 2 -->
+        <div class="step" id="step2">
+          <h3>確認自購金額</h3>
+          <div id="selfBuySummary" style="margin-bottom:1.2rem;color:#b23a48;font-weight:bold;text-align:center;"></div>
+          <div class="button-group">
+            <button type="button" onclick="nextStep(1)">◀ 上一步</button>
+            <button type="button" onclick="submitForm()">📮 送出</button>
+          </div>
+        </div>
+      </form>
+      <!-- 結果頁 -->
+      <div id="resultBox" class="result-box">
+        <div class="result-title">分潤計算結果</div>
+        <div class="result-item">
+          <span class="result-label">月份：</span>
+          <span id="resultMonth" class="result-value"></span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">總營業額：</span>
+          <span id="resultTotalAmount" class="result-value"></span> 元
+        </div>
+        <div class="result-item">
+          <span class="result-label">佳臻分潤 (33%)：</span>
+          <span id="resultJiaShare" class="result-value"></span> 元
+        </div>
+        <div class="result-item">
+          <span class="result-label">vicky分潤 (33.5%)：</span>
+          <span id="resultVickyShare" class="result-value"></span> 元
+        </div>
+        <div class="result-item">
+          <span class="result-label">宗憲分潤 (33.5%)：</span>
+          <span id="resultZongShare" class="result-value"></span> 元
+        </div>
+        <div class="result-item">
+          <span class="result-label">捐贈金額 (1%)：</span>
+          <span id="resultDonate" class="result-value"></span> 元
+        </div>
+        <div class="result-item">
+          <span class="result-label">捐贈分筆建議：</span>
+          <span id="resultDonateMulti" class="result-value"></span>
+        </div>
+        <button type="button" onclick="restartForm()">重新填寫</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // 商品單價
+    const PRICE_WASH = 448;
+    const PRICE_OIL = 518;
+    const PRICE_MASK = 450;
+
+    function nextStep(step) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById('step' + step).classList.add('active');
+      document.getElementById('resultBox').style.display = 'none';
+      if (step === 2) {
+        updateSelfBuySummary();
+      }
+    }
+
+    function calcSelfBuy(wash, oil, mask) {
+      return (Number(wash||0) * PRICE_WASH) + (Number(oil||0) * PRICE_OIL) + (Number(mask||0) * PRICE_MASK);
+    }
+
+    function updateSelfBuySummary() {
+      const form = document.getElementById('rolmieForm');
+      const jiaSelf = calcSelfBuy(form.jia_wash.value, form.jia_oil.value, form.jia_mask.value);
+      const vickySelf = calcSelfBuy(form.vicky_wash.value, form.vicky_oil.value, form.vicky_mask.value);
+      const zongSelf = calcSelfBuy(form.zong_wash.value, form.zong_oil.value, form.zong_mask.value);
+      document.getElementById('selfBuySummary').innerHTML =
+        `佳臻自購金額：<strong>${jiaSelf.toLocaleString()}</strong> 元<br>
+         vicky自購金額：<strong>${vickySelf.toLocaleString()}</strong> 元<br>
+         宗憲自購金額：<strong>${zongSelf.toLocaleString()}</strong> 元`;
+    }
+
+    function submitForm() {
+      const form = document.getElementById('rolmieForm');
+      const month = form.month.value;
+      const totalAmount = Number(form.total_amount.value);
+
+      // 自購金額
+      const jiaSelf = calcSelfBuy(form.jia_wash.value, form.jia_oil.value, form.jia_mask.value);
+      const vickySelf = calcSelfBuy(form.vicky_wash.value, form.vicky_oil.value, form.vicky_mask.value);
+      const zongSelf = calcSelfBuy(form.zong_wash.value, form.zong_oil.value, form.zong_mask.value);
+
+      // 分潤計算
+      const jiaShare = Math.round(totalAmount * 0.33 - jiaSelf);
+      const vickyShare = Math.round(totalAmount * 0.335 - vickySelf);
+      const zongShare = Math.round(totalAmount * 0.335 - zongSelf);
+      const donate = Math.round(totalAmount * 0.01);
+
+      // 捐贈分筆
+      let donateMulti = '';
+      if (donate >= 4000) {
+        const per = Math.floor(donate/3);
+        const rest = donate - per*2;
+        donateMulti = `分三筆：${per}、${per}、${rest} 元`;
+      } else if (donate >= 3000) {
+        const per = Math.floor(donate/2);
+        const rest = donate - per;
+        donateMulti = `分兩筆：${per}、${rest} 元`;
+      } else {
+        donateMulti = `單筆：${donate} 元`;
+      }
+
+      // 顯示結果頁
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById('resultBox').style.display = 'block';
+      document.getElementById('resultMonth').textContent = month;
+      document.getElementById('resultTotalAmount').textContent = totalAmount.toLocaleString();
+      document.getElementById('resultJiaShare').textContent = jiaShare.toLocaleString();
+      document.getElementById('resultVickyShare').textContent = vickyShare.toLocaleString();
+      document.getElementById('resultZongShare').textContent = zongShare.toLocaleString();
+      document.getElementById('resultDonate').textContent = donate.toLocaleString();
+      document.getElementById('resultDonateMulti').textContent = donateMulti;
+    }
+
+    function restartForm() {
+      document.getElementById('rolmieForm').reset();
+      nextStep(1);
+      document.getElementById('resultBox').style.display = 'none';
+      document.getElementById('selfBuySummary').innerHTML = '';
+    }
+  </script>
 </body>
 </html>
