@@ -205,6 +205,9 @@
           <label for="total_amount">總營業額</label>
           <input id="total_amount" name="total_amount" type="number" required />
 
+          <label for="bonus">蘿荔紅利金</label>
+          <input id="bonus" name="bonus" type="number" value="0" min="0" required />
+
           <label for="jia_wash">佳臻自購－私密洗數量</label>
           <input id="jia_wash" name="jia_wash" type="number" value="0" min="0" />
 
@@ -267,6 +270,10 @@
           <span id="resultTotalAmount" class="result-value"></span> 元
         </div>
         <div class="result-item">
+          <span class="result-label">蘿荔紅利金：</span>
+          <span id="resultBonus" class="result-value"></span> 元
+        </div>
+        <div class="result-item">
           <span class="result-label">淨利潤 (10%)：</span>
           <span id="resultNetProfit" class="result-value"></span> 元
         </div>
@@ -275,15 +282,15 @@
           <div id="resultSelfBuyList" class="selfbuy-list"></div>
         </div>
         <div class="result-item">
-          <span class="result-label">佳臻分潤 (33%)：</span>
+          <span class="result-label">佳臻分潤 (33% 含紅利抽成)：</span>
           <span id="resultJiaShare" class="result-value"></span> 元
         </div>
         <div class="result-item">
-          <span class="result-label">vicky分潤 (33.5%)：</span>
+          <span class="result-label">vicky分潤 (33.5% 含紅利抽成)：</span>
           <span id="resultVickyShare" class="result-value"></span> 元
         </div>
         <div class="result-item">
-          <span class="result-label">宗憲分潤 (33.5%)：</span>
+          <span class="result-label">宗憲分潤 (33.5% 含紅利抽成)：</span>
           <span id="resultZongShare" class="result-value"></span> 元
         </div>
         <div class="result-item">
@@ -370,6 +377,7 @@
       const form = document.getElementById('rolmieForm');
       const month = form.month.value;
       const totalAmount = Number(form.total_amount.value);
+      const bonus = Number(form.bonus.value) || 0;
 
       // 自購明細
       const jia = {
@@ -394,13 +402,16 @@
       // 淨利潤
       const netProfit = Math.round(totalAmount * 0.10);
 
+      // 蘿荔紅利抽成
+      const bonusShare = Math.round(bonus * 0.07);
+
       // 分潤計算
       const jiaSelf = calcSelfBuy(jia);
       const vickySelf = calcSelfBuy(vicky);
       const zongSelf = calcSelfBuy(zong);
-      const jiaShare = Math.round(netProfit * 0.33 - jiaSelf);
-      const vickyShare = Math.round(netProfit * 0.335 - vickySelf);
-      const zongShare = Math.round(netProfit * 0.335 - zongSelf);
+      const jiaShare = Math.round(netProfit * 0.33 - jiaSelf + bonusShare);
+      const vickyShare = Math.round(netProfit * 0.335 - vickySelf + bonusShare);
+      const zongShare = Math.round(netProfit * 0.335 - zongSelf + bonusShare);
       const donate = Math.round(totalAmount * 0.01);
 
       // 捐贈分筆
@@ -434,6 +445,7 @@
       document.getElementById('resultBox').style.display = 'block';
       document.getElementById('resultMonth').textContent = month;
       document.getElementById('resultTotalAmount').textContent = totalAmount.toLocaleString();
+      document.getElementById('resultBonus').textContent = bonus.toLocaleString();
       document.getElementById('resultNetProfit').textContent = netProfit.toLocaleString();
       document.getElementById('resultJiaShare').textContent = jiaShare.toLocaleString();
       document.getElementById('resultVickyShare').textContent = vickyShare.toLocaleString();
