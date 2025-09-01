@@ -281,13 +281,40 @@
           <span class="result-label">自購明細：</span>
           <div id="resultSelfBuyList" class="selfbuy-list"></div>
         </div>
+        <!-- 佳臻分潤 -->
+        <div class="result-item">
+          <span class="result-label">佳臻分潤 (33%)：</span>
+          <span id="resultJiaShareBase" class="result-value"></span> 元
+        </div>
+        <div class="result-item">
+          <span class="result-label">紅利抽成 (7%)：</span>
+          <span id="resultBonusShare" class="result-value"></span> 元
+        </div>
         <div class="result-item">
           <span class="result-label">佳臻分潤 (33% 含紅利抽成)：</span>
           <span id="resultJiaShare" class="result-value"></span> 元
         </div>
+        <!-- vicky分潤 -->
+        <div class="result-item">
+          <span class="result-label">vicky分潤 (33.5%)：</span>
+          <span id="resultVickyShareBase" class="result-value"></span> 元
+        </div>
+        <div class="result-item">
+          <span class="result-label">紅利抽成 (7%)：</span>
+          <span id="resultBonusShareVicky" class="result-value"></span> 元
+        </div>
         <div class="result-item">
           <span class="result-label">vicky分潤 (33.5% 含紅利抽成)：</span>
           <span id="resultVickyShare" class="result-value"></span> 元
+        </div>
+        <!-- 宗憲分潤 -->
+        <div class="result-item">
+          <span class="result-label">宗憲分潤 (33.5%)：</span>
+          <span id="resultZongShareBase" class="result-value"></span> 元
+        </div>
+        <div class="result-item">
+          <span class="result-label">紅利抽成 (7%)：</span>
+          <span id="resultBonusShareZong" class="result-value"></span> 元
         </div>
         <div class="result-item">
           <span class="result-label">宗憲分潤 (33.5% 含紅利抽成)：</span>
@@ -365,7 +392,7 @@
       function personBlock(name, obj) {
         let detail = buildSelfBuyDetail(obj);
         if (detail.length === 0) return '';
-        return `<div class="selfbuy-person"><b>${name}：</b><ul style="margin:0;padding:0;">${detail.map(i=>`<li class="selfbuy-item">${i}</li>`).join('')}</ul>總金額：${calcSelfBuy(obj).toLocaleString()}元</div>`;
+        return `<div class="selfbuy-person"><b>${name}：</b><ul style="margin:0;padding:0;">${detail.map(i=>`<li class="selfbuy-item">${i}</li>`).join('')}</ul>總金額：${calcSelfBuy(obj).toLocaleString()} 元</div>`;
       }
       html += personBlock('佳臻', jia);
       html += personBlock('vicky', vicky);
@@ -405,13 +432,21 @@
       // 蘿荔紅利抽成
       const bonusShare = Math.round(bonus * 0.07);
 
-      // 分潤計算
+      // 分潤計算（分開顯示）
       const jiaSelf = calcSelfBuy(jia);
       const vickySelf = calcSelfBuy(vicky);
       const zongSelf = calcSelfBuy(zong);
-      const jiaShare = Math.round(netProfit * 0.33 - jiaSelf + bonusShare);
-      const vickyShare = Math.round(netProfit * 0.335 - vickySelf + bonusShare);
-      const zongShare = Math.round(netProfit * 0.335 - zongSelf + bonusShare);
+
+      // 分潤本身（不含紅利抽成）
+      const jiaShareBase = Math.round(netProfit * 0.33 - jiaSelf);
+      const vickyShareBase = Math.round(netProfit * 0.335 - vickySelf);
+      const zongShareBase = Math.round(netProfit * 0.335 - zongSelf);
+
+      // 最終分潤（含紅利抽成）
+      const jiaShare = jiaShareBase + bonusShare;
+      const vickyShare = vickyShareBase + bonusShare;
+      const zongShare = zongShareBase + bonusShare;
+
       const donate = Math.round(totalAmount * 0.01);
 
       // 捐贈分筆
@@ -432,7 +467,7 @@
       function personBlock(name, obj) {
         let detail = buildSelfBuyDetail(obj);
         if (detail.length === 0) return '';
-        return `<div class="selfbuy-person"><b>${name}：</b><ul style="margin:0;padding:0;">${detail.map(i=>`<li class="selfbuy-item">${i}</li>`).join('')}</ul>總金額：${calcSelfBuy(obj).toLocaleString()}元</div>`;
+        return `<div class="selfbuy-person"><b>${name}：</b><ul style="margin:0;padding:0;">${detail.map(i=>`<li class="selfbuy-item">${i}</li>`).join('')}</ul>總金額：${calcSelfBuy(obj).toLocaleString()} 元</div>`;
       }
       let selfBuyHtml = '';
       selfBuyHtml += personBlock('佳臻', jia);
@@ -447,9 +482,22 @@
       document.getElementById('resultTotalAmount').textContent = totalAmount.toLocaleString();
       document.getElementById('resultBonus').textContent = bonus.toLocaleString();
       document.getElementById('resultNetProfit').textContent = netProfit.toLocaleString();
+
+      // 佳臻
+      document.getElementById('resultJiaShareBase').textContent = jiaShareBase.toLocaleString();
+      document.getElementById('resultBonusShare').textContent = bonusShare.toLocaleString();
       document.getElementById('resultJiaShare').textContent = jiaShare.toLocaleString();
+
+      // vicky
+      document.getElementById('resultVickyShareBase').textContent = vickyShareBase.toLocaleString();
+      document.getElementById('resultBonusShareVicky').textContent = bonusShare.toLocaleString();
       document.getElementById('resultVickyShare').textContent = vickyShare.toLocaleString();
+
+      // 宗憲
+      document.getElementById('resultZongShareBase').textContent = zongShareBase.toLocaleString();
+      document.getElementById('resultBonusShareZong').textContent = bonusShare.toLocaleString();
       document.getElementById('resultZongShare').textContent = zongShare.toLocaleString();
+
       document.getElementById('resultDonate').textContent = donate.toLocaleString();
       document.getElementById('resultDonateMulti').textContent = donateMulti;
     }
